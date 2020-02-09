@@ -5,9 +5,6 @@ from fastai.vision import *
 from prediction import magic
 import json
 
-trained_model_path = "data"
-learn = load_learner(trained_model_path)
-
 sio = socketio.Server(cors_allowed_origins="*")
 app = socketio.WSGIApp(sio, static_files={
     '/': {'content_type': 'text/html', 'filename': 'index.html'}
