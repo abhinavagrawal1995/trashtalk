@@ -1,5 +1,6 @@
 from fastai.vision import *
 import requests
+import cv2
 
 subscription_key = 'd50346a402d7489eb8fe28c0879508ea'
 
@@ -23,30 +24,53 @@ def getConfidenceForTrashPrediction(output, labels):
 
 
 def magic(image_path):
+    img = cv2.imread(image_path)
+    output = getAzureCVData(image_path)
+
+    if output is not None:
+        r = output['rectangle']
+        crop_img = img[r['y']:r['y'] + r['h'], r['x']:r['x'] + r['w']] #img[y:y+h, x:x+w]
+        cv2.imwrite(image_path, crop_img)
+
     output = learn.predict(open_image(image_path))
 
     recyclables = ['cardboard', 'plastic', 'glass', 'paper']
     landfill = ['metal', 'trash']
     compost = ['food']
 
-    recycleConfidence = getConfidenceForTrashPrediction(output, recyclables)
-    landfillConfidence = getConfidenceForTrashPrediction(output, landfill)
-    compostConfidence = getConfidenceForTrashPrediction(output, compost)
+    # recycleConfidence = getConfidenceForTrashPrediction(output, recyclables)
+    # landfillConfidence = getConfidenceForTrashPrediction(output, landfill)
+    # compostConfidence = getConfidenceForTrashPrediction(output, compost)
+    #
+    # confidences = {'recycle': recycleConfidence,
+    #        'landfill': landfillConfidence,
+    #        'compost': compostConfidence}
+    #
+    # maxConfidence = 0
+    # nnTrashType = None
+    # for label in confidences:
+    #     confidence = confidences[label]
+    #     if confidence > maxConfidence:
+    #         maxConfidence = confidence
+    #         nnTrashType = label
 
-    confidences = {'recycle': recycleConfidence,
-           'landfill': landfillConfidence,
-           'compost': compostConfidence}
 
-    maxConfidence = 0
+    labels = {'recycle': recyclables,
+           'landfill': landfill,
+           'compost': compost}
+
+
+    maxConfidence = float(max(output[2]))
+    nnMaterialType = str(output[0])
+
     nnTrashType = None
-    for label in confidences:
-        confidence = confidences[label]
-        if confidence > maxConfidence:
-            maxConfidence = confidence
+    for label in labels:
+        materials = labels[label]
+        if nnMaterialType in materials:
             nnTrashType = label
 
-    print('max confidence=', maxConfidence)
-    print('nnTrashType=', nnTrashType)
+    # print('max confidence=', maxConfidence)
+    # print('nnTrashType=', nnTrashType)
 
     if maxConfidence < threshold:
         # print('calling azure')
@@ -54,8 +78,8 @@ def magic(image_path):
         if data is not None:
             azureTrashType = data['trashType']
             azureConfidence = data['confidence']
-            print('azure confidence=', azureConfidence)
-            print('azureTrashType=', azureTrashType)
+            # print('azure confidence=', azureConfidence)
+            # print('azureTrashType=', azureTrashType)
             return azureTrashType
 
     return nnTrashType
@@ -77,7 +101,7 @@ def getAzureCVData(image_path):
                 'equipment', 'inkjet', 'cartridge', 'inkjet cardridge', 'cd', 'disk', 'tire', 'ink cartridge', 'tv',
                 'power cord', 'personal computer', 'laptop', 'portable computer']
 
-    compost = ['fruit', 'vegetable', 'apple', 'pear', 'banana', 'cucumber', 'strawberry', 'apricots', 'avocado',
+    compost = ['food', 'fruit', 'vegetable', 'apple', 'pear', 'banana', 'cucumber', 'strawberry', 'apricots', 'avocado',
                'blackberry', 'cherry', 'coconut', 'date', 'durian', 'dragonfruit', 'grape', 'grapefruit', 'kiwi',
                'lime', 'lemon', 'lychee', 'mango', 'melon', 'nectarine', 'olive', 'orange', 'peach', 'pineapple',
                'plum', 'pomegranate', 'pomelo', 'raspberries', 'watermelon', 'broccoflower', 'broccoli', 'cabbage',
@@ -113,13 +137,14 @@ def getAzureCVData(image_path):
             object = objects[0]
             objectName = object['object'].lower()
             confidence = object['confidence']
+            rectangle = object['rectangle']
             for label in trashTypes.keys():
                 items = trashTypes[label]
                 if objectName in items:
-                    ret = {'object': objectName, 'trashType': label, 'confidence': confidence}
+                    ret = {'object': objectName, 'trashType': label, 'confidence': confidence, 'rectangle': rectangle}
                     return ret
     return None
 
-
-# image_path = f"realtest/bottle.jpeg"
+#
+# image_path = "temp.jpeg"
 # print(magic(image_path))
