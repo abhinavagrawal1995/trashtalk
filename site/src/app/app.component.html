@@ -1,0 +1,19 @@
+<div class="container-fluid outer">
+  <div class="row nav">
+    <span>TrashTalk</span>  
+  </div>
+  <div class="row body">
+    <div class="col-9 main">
+      <div class="webcam camera">
+        <webcam [height]="500" [width]="500" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam" [videoOptions]="videoOptions" [imageQuality]="1" (initError)="handleInitError($event)"></webcam>
+      </div>
+      <div class="webcam snapshot" *ngIf="webcamImage">
+          <h2>Nice one!</h2>
+          <img [src]="webcamImage.imageAsDataUrl"/>
+      </div>
+      <button class="btn btn-primary capture" (click)="triggerSnapshot();">Click</button>
+    </div>
+    <div class="col-3 sidebar">main</div>
+  </div>
+</div>
+
