@@ -16,15 +16,14 @@ def connect(sid, environ):
 
 @sio.on('image')
 def image(sid, data):
+    print("recvd request")
     with open("temp.jpeg", "wb") as fh:
         fh.write(base64.b64decode(data))
+    print("written file")
 
-    with open("temp.jpeg", "rb") as fh:
-        img = open_image(fh)
-        # learn.predict(img)
-        magic(img)
-
-    sio.emit('def', 'yayyy')
+    label = classification_action = magic("temp.jpeg")
+    print(label)
+    sio.emit('classification', label)
 
 @sio.event
 def disconnect(sid):
@@ -33,13 +32,3 @@ def disconnect(sid):
 if __name__ == '__main__':
     eventlet.wsgi.server(eventlet.listen(('', 5001)), app)
 
-
-
-    # print('start')
-    # with open("temp.jpeg", "rb") as fh:
-    #     img = open_image(fh)
-    #     pred = learn.predict(img)
-    #     nparr = np.asarray(np.argmax(predictions[0], axis=1))
-    #     print(pred)
-    #     print(nparr)
-    # print('end')

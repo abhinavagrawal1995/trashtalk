@@ -1,19 +1,27 @@
-<div class="container-fluid outer">
-  <div class="row nav">
-    <span>TrashTalk</span>  
+<div class="outer">
+  <div class="webcam camera" *ngIf="!webcamImage">
+    <div class="helptext">Gotta sort 'em all!</div>
+    <webcam [height]="500" [width]="500" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+      [videoOptions]="videoOptions" [imageQuality]="1" (initError)="handleInitError($event)">
+    </webcam>
   </div>
-  <div class="row body">
-    <div class="col-9 main">
-      <div class="webcam camera">
-        <webcam [height]="500" [width]="500" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam" [videoOptions]="videoOptions" [imageQuality]="1" (initError)="handleInitError($event)"></webcam>
-      </div>
-      <div class="webcam snapshot" *ngIf="webcamImage">
-          <h2>Nice one!</h2>
-          <img [src]="webcamImage.imageAsDataUrl"/>
-      </div>
-      <button class="btn btn-primary capture" (click)="triggerSnapshot();">Click</button>
+  <div class="webcam snapshot" *ngIf="webcamImage">
+    <div class="recycle-outer" *ngIf="!classification">
+      <div class="recycle">&#9851;</div>
     </div>
-    <div class="col-3 sidebar">main</div>
+    <div class="helptext" *ngIf="classification">Analysis Complete</div>
+    <div *ngIf="classification">
+      <img class="preview animated fadeOutRight" [src]="webcamImage.imageAsDataUrl" id="motion"/>
+      <app-trashcan [text]="classification"></app-trashcan>
+    </div>
   </div>
-</div>
 
+
+  <div class="col-4 button-outer">
+    <li><a class="button primary" (click)="triggerSnapshot();" *ngIf="!webcamImage">Analyze</a></li>
+    <li><a class="button primary" (click)="displayCamera();" *ngIf="webcamImage">Back</a></li>
+  </div>
+
+
+
+</div>

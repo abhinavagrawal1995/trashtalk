@@ -2,9 +2,10 @@ from fastai.vision import *
 import requests
 import cv2
 
-subscription_key = 'd50346a402d7489eb8fe28c0879508ea'
+# Input Azure Object Detection API key here
+subscription_key = ''
 
-model_training_relative = "model_training/"
+model_training_relative = ""
 trained_model_path = model_training_relative + "data"
 learn = load_learner(trained_model_path)
 
@@ -38,22 +39,6 @@ def magic(image_path):
     landfill = ['metal', 'trash']
     compost = ['food']
 
-    # recycleConfidence = getConfidenceForTrashPrediction(output, recyclables)
-    # landfillConfidence = getConfidenceForTrashPrediction(output, landfill)
-    # compostConfidence = getConfidenceForTrashPrediction(output, compost)
-    #
-    # confidences = {'recycle': recycleConfidence,
-    #        'landfill': landfillConfidence,
-    #        'compost': compostConfidence}
-    #
-    # maxConfidence = 0
-    # nnTrashType = None
-    # for label in confidences:
-    #     confidence = confidences[label]
-    #     if confidence > maxConfidence:
-    #         maxConfidence = confidence
-    #         nnTrashType = label
-
 
     labels = {'recycle': recyclables,
            'landfill': landfill,
@@ -68,9 +53,6 @@ def magic(image_path):
         materials = labels[label]
         if nnMaterialType in materials:
             nnTrashType = label
-
-    # print('max confidence=', maxConfidence)
-    # print('nnTrashType=', nnTrashType)
 
     if maxConfidence < threshold:
         # print('calling azure')
@@ -145,6 +127,3 @@ def getAzureCVData(image_path):
                     return ret
     return None
 
-#
-# image_path = "temp.jpeg"
-# print(magic(image_path))

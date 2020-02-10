@@ -11,9 +11,10 @@ import { Socket } from 'ngx-socket-io';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  classification_result = this.socket.fromEvent<string>('classification');
+  classification=null;
   // toggle webcam on/off
   public showWebcam = true;
-  public allowCameraSwitch = true;
   public videoOptions: MediaTrackConstraints = {
     width: {ideal: 512},
     height: {ideal: 384}
@@ -30,15 +31,13 @@ export class AppComponent implements OnInit {
   constructor(private socket: Socket) { }
   
   public ngOnInit(): void {
+    this.classification_result.subscribe(res=> {
+      this.classification = res;
+    })
   }
 
   public triggerSnapshot(): void {
     this.trigger.next();
-  }
-
-  public toggleWebcam(): void {
-    debugger
-    this.showWebcam = !this.showWebcam;
   }
 
   public handleInitError(error: WebcamInitError): void {
@@ -46,16 +45,18 @@ export class AppComponent implements OnInit {
   }
 
   public handleImage(webcamImage: WebcamImage): void {
-    console.info('received webcam image', webcamImage);
     this.webcamImage = webcamImage;
     var image_data = webcamImage.imageAsBase64
-    console.log(image_data)
     this.socket.emit('image', image_data);
-    // this.socket.on('')
   }
 
   public get triggerObservable(): Observable<void> {
     return this.trigger.asObservable();
+  }
+
+  public displayCamera() {
+    this.webcamImage = null;
+    this.classification = null;
   }
 
 }

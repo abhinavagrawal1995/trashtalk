@@ -1,32 +1,37 @@
-.outer {
-    background-image: url("../assets/bg.png");
-    background-size: cover;
-    height: 100vh;
-    width: 100vw;
-}
-
-.nav{
-    /* background-image: linear-gradient(to bottom right, #c6d59e, #ffffff); */
-    height: 75px;
-    padding: 0 15px;
-}
-
-
-.nav>span {
-    font-size: 24px;
-    line-height: 50px;
-    font-weight: 600;
-    color: white;
-    border-bottom: 1px solid #ffffff7d;
-    margin: auto;
-}
-
-.body  {
-    height: calc(100% - 50px);
+.outer{
     position: relative;
-
 }
 
-.webcam {
-    margin: 12% 25%;
+
+
+@-webkit-keyframes spin {
+    0%   { opacity: 0.2;  
+  }
+    50% { opacity: 1; -webkit-transform: rotate(180deg);  
+  }
+    100% { opacity: 0.2; -webkit-transform: rotate(360deg);   
+   }
+  }
+  
+  .recycle {
+    font-size: 190px;
+    color: lightgreen;
+    -webkit-animation: spin 6s linear infinite; 
+    bottom: 0;
+    left: 17%;
+  }
+
+
+.preview{
+    float:left;
+    height: 200px;
+    margin-top: 90px;
+}
+
+.button-outer{
+  margin-top: 25px;
+}
+
+.helptext{
+  font-size: 32px;
 }

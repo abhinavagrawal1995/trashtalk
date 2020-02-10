@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Amatic+SC&display=swap');
+
+.logo-title{
+    font-family: 'Amatic SC', cursive;
+    font-weight: 600;
+}
+
+ul, li{
+    list-style-type: none;
+}
