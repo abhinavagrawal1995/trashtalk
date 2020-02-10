@@ -1,8 +1,5 @@
 # TrashTalk
 
-## To recycle or not to recylce? We let the computer's vision decide! 
-
-
 Dataset and trained model : https://drive.google.com/open?id=1eawx4aqh4sTnZ2XCFqeUMTWf3FwMXQLX
 
 trashnet-extended is the zip file with all images.
